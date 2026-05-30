@@ -492,6 +492,66 @@
     .font-chip:active { color: var(--text); border-color: var(--border-hi); }
     .font-chip.selected { color: var(--text); border-color: var(--accent); }
 
+    /* ── Toggle ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 12px;
+    }
+
+    .toggle-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+    }
+
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border-hi);
+      border-radius: 11px;
+      transition: background .2s, border-color .2s;
+      cursor: pointer;
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      left: 3px; top: 3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--dim);
+      transition: transform .2s, background .2s;
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(18px);
+      background: #fff;
+    }
+
+    #promptField { transition: opacity .2s; }
+    #promptField.disabled { opacity: 0.35; pointer-events: none; }
+
     .btn-save {
       background: transparent;
       color: var(--green);
@@ -648,8 +708,16 @@
         </div>
       </div>
 
-      <div class="field">
-        <label>Промпт для фактов — {artist} {album}</label>
+      <div class="toggle-row">
+        <span class="toggle-label">Генерация фактов через AI</span>
+        <label class="toggle">
+          <input type="checkbox" id="cfgFactsEnabled" onchange="togglePromptField()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div id="promptField" class="field">
+        <label>Промпт — {artist} {album}</label>
         <textarea id="cfgPrompt"></textarea>
       </div>
     </div>
@@ -706,6 +774,7 @@ const LS = {
   PROMPT:   'facts_prompt',
   ACCENT:   'ui_accent',
   FONT:     'ui_font',
+  FACTS_ON: 'facts_enabled',
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -749,6 +818,7 @@ function saveSettings() {
   localStorage.setItem(LS.TG_TOKEN, document.getElementById('cfgTgToken').value.trim());
   localStorage.setItem(LS.TG_CHAN,  document.getElementById('cfgTgChannel').value.trim());
   localStorage.setItem(LS.PROMPT,   document.getElementById('cfgPrompt').value.trim());
+  localStorage.setItem(LS.FACTS_ON, document.getElementById('cfgFactsEnabled').checked ? 'true' : 'false');
   applyAppearance();
   toast('Сохранено', 'ok');
 }
@@ -765,6 +835,12 @@ function pickFont(el) {
   el.classList.add('selected');
   localStorage.setItem(LS.FONT, el.dataset.font);
   applyAppearance();
+}
+
+function togglePromptField() {
+  const on = document.getElementById('cfgFactsEnabled').checked;
+  document.getElementById('promptField').classList.toggle('disabled', !on);
+  localStorage.setItem(LS.FACTS_ON, on ? 'true' : 'false');
 }
 
 function applyAppearance() {
@@ -969,22 +1045,28 @@ async function buildDraft() {
     step(2, 'done');
 
     let facts;
-    if (anthKey) {
+    const factsEnabled = cfg(LS.FACTS_ON) !== 'false';
+    if (factsEnabled && anthKey) {
       step(3, 'active');
       facts = await generateFacts(album.artist, album.name, anthKey, prompt);
       step(3, 'done');
     } else {
       step(3, 'done');
-      facts = '• (факты пропущены — нет Anthropic API Key)';
+      facts = factsEnabled
+        ? '• (факты пропущены — нет Anthropic API Key в Settings)'
+        : '';
     }
 
     step(4, 'active');
     const date = fmtDate(album.releaseDate);
 
+    const factsBlock = facts
+      ? '📌 <b>Несколько фактов:</b>\n'+facts+'\n\n'
+      : '';
     const draft =
       '🎵 <b>'+esc(album.artist)+'</b> — <b>'+esc(album.name)+'</b>\n\n' +
       '🗓 Дата выхода: '+date+'\n\n' +
-      '📌 <b>Несколько фактов:</b>\n'+facts+'\n\n' +
+      factsBlock +
       '<a href="'+albumLink+'">🎧 Слушать на всех платформах</a>';
 
     coverUrl = album.coverUrl;
