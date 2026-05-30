@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ПОСТЕР</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=Spectral:wght@400;600&family=Geologica:wght@300;400;500&display=swap');
 
     :root {
       --bg: #0c0c0c;
@@ -16,74 +16,98 @@
       --text: #dcdcdc;
       --dim: #666;
       --dim2: #444;
-      --red: #e0341c;
-      --red-hi: #ff4433;
+      --accent: #e0341c;
+      --accent-hi: #ff4433;
       --green: #3fb950;
       --blue: #4a9eff;
       --mono: 'IBM Plex Mono', monospace;
-      --sans: 'IBM Plex Sans', sans-serif;
+      --ui-font: 'IBM Plex Sans', sans-serif;
       --r: 3px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: var(--sans);
+      font-family: var(--ui-font);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 48px 24px 96px;
+      padding: 0 0 96px;
     }
 
-    .wrap {
-      max-width: 640px;
-      margin: 0 auto;
-    }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 0 18px; }
 
-    /* ── Header ── */
-    header {
+    /* ── Top nav ── */
+    nav {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 44px;
-      padding-bottom: 20px;
+      align-items: stretch;
       border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
     }
 
-    .wordmark {
+    .nav-wordmark {
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--dim);
+      padding: 18px 18px 18px 18px;
       user-select: none;
+      flex-shrink: 0;
     }
 
-    .wordmark em { color: var(--red); font-style: normal; }
+    .nav-wordmark em { color: var(--accent); font-style: normal; }
 
-    .btn-ghost {
+    .nav-tabs {
+      display: flex;
+      margin-left: auto;
+    }
+
+    .nav-tab {
       font-family: var(--mono);
       font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--dim);
+      color: var(--dim2);
       background: none;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 5px 10px;
+      border: none;
+      border-left: 1px solid var(--border);
+      padding: 0 20px;
       cursor: pointer;
-      transition: color .15s, border-color .15s;
+      position: relative;
+      transition: color .15s;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .btn-ghost:hover { color: var(--text); border-color: var(--border-hi); }
-    .btn-ghost.active { color: var(--text); border-color: var(--border-hi); }
+    .nav-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform .2s;
+    }
+
+    .nav-tab.active { color: var(--text); }
+    .nav-tab.active::after { transform: scaleX(1); }
+
+    /* ── Pages ── */
+    .page { display: none; }
+    .page.active { display: block; }
 
     /* ── URL row ── */
     .url-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 36px;
+      margin-bottom: 24px;
     }
 
     .url-input {
@@ -104,7 +128,7 @@
     .url-input::placeholder { color: var(--dim2); }
 
     .btn-build {
-      background: var(--red);
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: var(--r);
@@ -116,22 +140,19 @@
       padding: 13px 20px;
       cursor: pointer;
       white-space: nowrap;
-      transition: background .15s;
       flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .15s;
     }
 
-    .btn-build:hover:not(:disabled) { background: var(--red-hi); }
-
-    .btn-build:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
+    .btn-build:active:not(:disabled) { background: var(--accent-hi); }
+    .btn-build:disabled { opacity: 0.35; cursor: not-allowed; }
 
     /* ── Progress ── */
     #progress {
       display: none;
-      margin-bottom: 32px;
-      padding: 20px;
+      margin-bottom: 24px;
+      padding: 16px 18px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--r);
@@ -141,7 +162,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 5px 0;
+      padding: 4px 0;
       font-family: var(--mono);
       font-size: 11px;
       color: var(--dim2);
@@ -149,8 +170,7 @@
     }
 
     .step-dot {
-      width: 5px;
-      height: 5px;
+      width: 5px; height: 5px;
       border-radius: 50%;
       background: var(--border-hi);
       flex-shrink: 0;
@@ -158,47 +178,40 @@
     }
 
     .step.active { color: var(--text); }
-    .step.active .step-dot { background: var(--red); animation: blink 0.9s infinite; }
+    .step.active .step-dot { background: var(--accent); animation: blink .9s infinite; }
     .step.done { color: var(--dim); }
     .step.done .step-dot { background: var(--green); animation: none; }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
-    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
     /* ── Result ── */
     #result { display: none; }
 
     .meta-card {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       align-items: center;
-      padding: 14px;
+      padding: 12px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--r);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .cover {
-      width: 72px;
-      height: 72px;
+      width: 60px; height: 60px;
       border-radius: 2px;
       object-fit: cover;
       flex-shrink: 0;
       background: var(--surface2);
     }
 
-    .meta-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .meta-info { flex: 1; min-width: 0; }
 
     .meta-title {
       font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 3px;
+      font-size: 13px;
+      margin-bottom: 2px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -211,65 +224,145 @@
       line-height: 1.6;
     }
 
-    .meta-sub a {
-      color: var(--blue);
-      text-decoration: none;
-    }
+    .meta-sub a { color: var(--blue); text-decoration: none; }
 
-    .draft-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--dim);
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
       margin-bottom: 8px;
     }
 
-    .draft-textarea {
-      width: 100%;
-      min-height: 280px;
+    .tb-btn {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--r);
-      color: var(--text);
+      color: var(--dim);
       font-family: var(--mono);
       font-size: 12px;
+      padding: 9px 12px;
+      cursor: pointer;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: color .1s, background .1s;
+    }
+
+    .tb-btn:active { color: var(--text); background: var(--surface2); border-color: var(--border-hi); }
+
+    /* ── Textarea ── */
+    .draft-textarea {
+      width: 100%;
+      min-height: 200px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top-left-radius: var(--r);
+      border-top-right-radius: var(--r);
+      border-bottom: none;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
       line-height: 1.75;
-      padding: 16px;
+      padding: 14px;
       outline: none;
-      resize: vertical;
-      margin-bottom: 8px;
+      resize: none;
       transition: border-color .15s;
-      tab-size: 2;
+      display: block;
     }
 
     .draft-textarea:focus { border-color: var(--border-hi); }
 
-    .meta-footer {
+    /* ── Live preview (always visible below textarea) ── */
+    .preview-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 7px 14px;
+    }
+
+    .preview-divider-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim2);
+      flex-shrink: 0;
+    }
+
+    .preview-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .tg-mock {
+      background: #17212b;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-bottom-left-radius: var(--r);
+      border-bottom-right-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .tg-cover-img {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tg-cover-empty {
+      height: 80px;
+      background: #1c2733;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2a3d4e;
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+
+    .tg-body { padding: 10px 13px 12px; }
+
+    .tg-text {
+      font-family: -apple-system, 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #e8e8e8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .tg-text b { font-weight: 600; }
+    .tg-text a { color: #6ab3f3; text-decoration: none; }
+
+    .tg-time {
+      text-align: right;
+      font-size: 11px;
+      color: #4d6374;
+      margin-top: 5px;
+      font-family: -apple-system, sans-serif;
+    }
+
+    /* ── Draft footer ── */
+    .draft-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin: 10px 0 14px;
     }
 
-    .char-count {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--dim);
-    }
+    .char-count { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+    .char-count.over { color: var(--accent); }
+    .parse-hint { font-family: var(--mono); font-size: 10px; color: var(--dim2); }
 
-    .char-count.over { color: var(--red); }
-
-    .parse-hint {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--dim2);
-    }
-
-    .action-row {
-      display: flex;
-      gap: 8px;
-    }
+    /* ── Action row ── */
+    .action-row { display: flex; gap: 8px; }
 
     .btn-secondary {
       background: var(--surface2);
@@ -280,16 +373,17 @@
       font-size: 11px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 11px 16px;
+      padding: 14px 16px;
       cursor: pointer;
-      transition: color .15s, border-color .15s;
+      -webkit-tap-highlight-color: transparent;
+      transition: color .15s;
     }
 
-    .btn-secondary:hover { color: var(--text); border-color: var(--border-hi); }
+    .btn-secondary:active { color: var(--text); }
 
     .btn-send {
       flex: 1;
-      background: var(--red);
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: var(--r);
@@ -298,44 +392,40 @@
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 11px 20px;
+      padding: 14px 20px;
       cursor: pointer;
       transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .btn-send:hover:not(:disabled) { background: var(--red-hi); }
+    .btn-send:active:not(:disabled) { background: var(--accent-hi); }
     .btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    /* ── Settings ── */
-    #settings {
-      display: none;
-      margin-top: 44px;
-      padding-top: 32px;
-      border-top: 1px solid var(--border);
+    /* ── Settings page ── */
+    .settings-section {
+      margin-bottom: 32px;
     }
 
-    .section-title {
+    .settings-title {
       font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.18em;
+      font-size: 9px;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--dim);
-      margin-bottom: 20px;
+      color: var(--dim2);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .field { margin-bottom: 14px; }
+    .field { margin-bottom: 12px; }
 
-    .field-row {
-      display: flex;
-      gap: 10px;
-    }
-
+    .field-row { display: flex; gap: 10px; }
     .field-row .field { flex: 1; }
 
     .field label {
       display: block;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9px;
       letter-spacing: 0.06em;
       color: var(--dim);
       margin-bottom: 5px;
@@ -358,11 +448,49 @@
     .field input:focus,
     .field textarea:focus { border-color: var(--border-hi); }
 
-    .field textarea {
-      min-height: 90px;
-      resize: vertical;
-      line-height: 1.6;
+    .field textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
+
+    /* Appearance */
+    .color-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
     }
+
+    .color-swatch {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color .15s, transform .12s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .color-swatch:active { transform: scale(.9); }
+    .color-swatch.selected { border-color: var(--text); }
+
+    .font-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .font-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--dim);
+      cursor: pointer;
+      transition: color .12s, border-color .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .font-chip:active { color: var(--text); border-color: var(--border-hi); }
+    .font-chip.selected { color: var(--text); border-color: var(--accent); }
 
     .btn-save {
       background: transparent;
@@ -373,20 +501,20 @@
       font-size: 11px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 10px 20px;
+      padding: 12px 22px;
       cursor: pointer;
       margin-top: 6px;
+      -webkit-tap-highlight-color: transparent;
       transition: background .15s;
     }
 
-    .btn-save:hover { background: rgba(63,185,80,.08); }
+    .btn-save:active { background: rgba(63,185,80,.1); }
 
     /* ── Toast ── */
     #toast {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
-      padding: 10px 16px;
+      bottom: 24px; right: 18px;
+      padding: 10px 15px;
       background: var(--surface2);
       border: 1px solid var(--border-hi);
       border-radius: var(--r);
@@ -402,85 +530,160 @@
 
     #toast.show { opacity: 1; transform: translateY(0); }
     #toast.ok { border-color: var(--green); color: var(--green); }
-    #toast.err { border-color: var(--red); color: var(--red); }
+    #toast.err { border-color: var(--accent); color: var(--accent); }
   </style>
 </head>
 <body>
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="nav-wordmark">ПОСТЕР<em>.</em>release</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="navCompose" onclick="showPage('compose')">Compose</button>
+    <button class="nav-tab" id="navSettings" onclick="showPage('settings')">Settings</button>
+  </div>
+</nav>
+
 <div class="wrap">
 
-  <header>
-    <div class="wordmark">ПОСТЕР<em>.</em>release</div>
-    <button class="btn-ghost" id="settingsBtn" onclick="toggleSettings()">Настройки</button>
-  </header>
+  <!-- ══ Compose ══ -->
+  <div class="page active" id="pageCompose">
 
-  <div class="url-row">
-    <input
-      type="text"
-      id="spotifyUrl"
-      class="url-input"
-      placeholder="https://open.spotify.com/album/..."
-      onkeydown="if(event.key==='Enter')buildDraft()"
-    />
-    <button class="btn-build" id="buildBtn" onclick="buildDraft()">Собрать</button>
+    <div class="url-row">
+      <input
+        type="text"
+        id="spotifyUrl"
+        class="url-input"
+        placeholder="https://open.spotify.com/album/… или /track/…"
+        onkeydown="if(event.key==='Enter')buildDraft()"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+      />
+      <button class="btn-build" id="buildBtn" onclick="buildDraft()">Собрать</button>
+    </div>
+
+    <div id="progress">
+      <div class="step" id="s1"><div class="step-dot"></div><span>Получение данных Spotify</span></div>
+      <div class="step" id="s2"><div class="step-dot"></div><span>Сборка ссылок</span></div>
+      <div class="step" id="s3"><div class="step-dot"></div><span>Генерация фактов (AI + web search)</span></div>
+      <div class="step" id="s4"><div class="step-dot"></div><span>Сборка черновика</span></div>
+    </div>
+
+    <div id="result">
+      <div class="meta-card" id="metaCard"></div>
+
+      <div class="toolbar">
+        <button class="tb-btn" onclick="tbWrap('<b>','</b>')"><b>B</b></button>
+        <button class="tb-btn" onclick="tbWrap('<i>','</i>')"><i>I</i></button>
+        <button class="tb-btn" onclick="tbWrap('<code>','</code>')">{ }</button>
+        <button class="tb-btn" onclick="tbInsert('\n• ')">• пункт</button>
+        <button class="tb-btn" onclick="tbInsert('\n\n')">↵↵</button>
+        <button class="tb-btn" onclick="tbInsert('🎵')">🎵</button>
+        <button class="tb-btn" onclick="tbInsert('🗓')">🗓</button>
+        <button class="tb-btn" onclick="tbInsert('📌')">📌</button>
+        <button class="tb-btn" onclick="tbInsert('🎧')">🎧</button>
+      </div>
+
+      <textarea
+        class="draft-textarea"
+        id="draftText"
+        oninput="onDraftInput()"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+      ></textarea>
+
+      <!-- Live preview stitched to bottom of textarea -->
+      <div class="preview-divider">
+        <div class="preview-divider-label">Превью</div>
+        <div class="preview-divider-line"></div>
+      </div>
+      <div class="tg-mock">
+        <div id="previewCoverWrap"><div class="tg-cover-empty">обложка появится после сборки</div></div>
+        <div class="tg-body">
+          <div class="tg-text" id="previewText"></div>
+          <div class="tg-time" id="previewTime"></div>
+        </div>
+      </div>
+
+      <div class="draft-footer">
+        <div class="char-count" id="charCount">0 / 1024</div>
+        <div class="parse-hint">parse_mode: HTML</div>
+      </div>
+      <div class="action-row">
+        <button class="btn-secondary" onclick="copyDraft()">Копировать</button>
+        <button class="btn-send" id="sendBtn" onclick="sendPost()">Отправить →</button>
+      </div>
+    </div>
+
   </div>
 
-  <div id="progress">
-    <div class="step" id="s1"><div class="step-dot"></div><span>Получение данных Spotify</span></div>
-    <div class="step" id="s2"><div class="step-dot"></div><span>Сборка ссылок</span></div>
-    <div class="step" id="s3"><div class="step-dot"></div><span>Генерация фактов (AI + web search)</span></div>
-    <div class="step" id="s4"><div class="step-dot"></div><span>Сборка черновика</span></div>
-  </div>
+  <!-- ══ Settings ══ -->
+  <div class="page" id="pageSettings">
 
-  <div id="result">
-    <div class="meta-card" id="metaCard"></div>
-    <div class="draft-label">Черновик — редактируй при необходимости</div>
-    <textarea class="draft-textarea" id="draftText" oninput="updateCount()"></textarea>
-    <div class="meta-footer">
-      <div class="char-count" id="charCount">0 / 1024</div>
-      <div class="parse-hint">parse_mode: HTML</div>
-    </div>
-    <div class="action-row">
-      <button class="btn-secondary" onclick="copyDraft()">Копировать</button>
-      <button class="btn-send" id="sendBtn" onclick="sendPost()">Отправить в Telegram →</button>
-    </div>
-  </div>
+    <div class="settings-section">
+      <div class="settings-title">API</div>
 
-  <div id="settings">
-    <div class="section-title">API / Конфигурация</div>
-
-    <div class="field-row">
-      <div class="field">
-        <label>Spotify Client ID</label>
-        <input type="text" id="cfgSpId" autocomplete="off">
+      <div class="field-row">
+        <div class="field">
+          <label>Spotify Client ID</label>
+          <input type="text" id="cfgSpId" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Client Secret</label>
+          <input type="password" id="cfgSpSecret" autocomplete="off">
+        </div>
       </div>
-      <div class="field">
-        <label>Spotify Client Secret</label>
-        <input type="password" id="cfgSpSecret" autocomplete="off">
-      </div>
-    </div>
 
-    <div class="field">
-      <label>Anthropic API Key</label>
-      <input type="password" id="cfgAnthKey" autocomplete="off">
-    </div>
-
-    <div class="field-row">
       <div class="field">
-        <label>Telegram Bot Token</label>
-        <input type="password" id="cfgTgToken" autocomplete="off">
+        <label>Anthropic API Key</label>
+        <input type="password" id="cfgAnthKey" autocomplete="off">
       </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Telegram Bot Token</label>
+          <input type="password" id="cfgTgToken" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Channel</label>
+          <input type="text" id="cfgTgChannel" placeholder="@channel">
+        </div>
+      </div>
+
       <div class="field">
-        <label>Channel ID</label>
-        <input type="text" id="cfgTgChannel" placeholder="@channel или -100…">
+        <label>Промпт для фактов — {artist} {album}</label>
+        <textarea id="cfgPrompt"></textarea>
       </div>
     </div>
 
-    <div class="field">
-      <label>Промпт для фактов — переменные: {artist} {album}</label>
-      <textarea id="cfgPrompt"></textarea>
+    <div class="settings-section">
+      <div class="settings-title">Внешний вид</div>
+
+      <div class="field">
+        <label>Акцентный цвет</label>
+        <div class="color-row" id="colorRow">
+          <div class="color-swatch selected" data-color="#e0341c" style="background:#e0341c" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#e05c1c" style="background:#e05c1c" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#c4a227" style="background:#c4a227" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#2e9e52" style="background:#2e9e52" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#2271c4" style="background:#2271c4" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#8b2ec4" style="background:#8b2ec4" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#c42e7e" style="background:#c42e7e" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#c4c4c4" style="background:#c4c4c4" onclick="pickColor(this)"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Шрифт интерфейса</label>
+        <div class="font-row" id="fontRow">
+          <div class="font-chip selected" data-font="'IBM Plex Sans', sans-serif" style="font-family:'IBM Plex Sans',sans-serif" onclick="pickFont(this)">IBM Plex</div>
+          <div class="font-chip" data-font="'Geologica', sans-serif" style="font-family:'Geologica',sans-serif" onclick="pickFont(this)">Geologica</div>
+          <div class="font-chip" data-font="'Spectral', serif" style="font-family:'Spectral',serif" onclick="pickFont(this)">Spectral</div>
+          <div class="font-chip" data-font="-apple-system, sans-serif" style="font-family:-apple-system,sans-serif" onclick="pickFont(this)">System</div>
+        </div>
+      </div>
     </div>
 
     <button class="btn-save" onclick="saveSettings()">Сохранить</button>
+
   </div>
 
 </div>
@@ -490,33 +693,53 @@
 <script>
 // ── Constants ─────────────────────────────────────────────────────────────────
 const DEFAULT_PROMPT =
-  `Найди 3–5 интересных фактов об альбоме "{album}" исполнителя "{artist}" для публикации ` +
-  `в русскоязычном Telegram-канале о музыке. Пиши на русском языке. ` +
-  `Каждый факт начинай с "• ". Только факты, без вступления и заключения.`;
+  'Найди 3–5 интересных фактов об альбоме "{album}" исполнителя "{artist}" для публикации ' +
+  'в русскоязычном Telegram-канале о музыке. Пиши на русском языке. ' +
+  'Каждый факт начинай с "• ". Только факты, без вступления и заключения.';
 
 const LS = {
-  SP_ID:     'sp_client_id',
-  SP_SEC:    'sp_client_secret',
-  ANTH:      'anthropic_key',
-  TG_TOKEN:  'tg_bot_token',
-  TG_CHAN:   'tg_channel_id',
-  PROMPT:    'facts_prompt',
+  SP_ID:    'sp_client_id',
+  SP_SEC:   'sp_client_secret',
+  ANTH:     'anthropic_key',
+  TG_TOKEN: 'tg_bot_token',
+  TG_CHAN:  'tg_channel_id',
+  PROMPT:   'facts_prompt',
+  ACCENT:   'ui_accent',
+  FONT:     'ui_font',
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let coverUrl = '';
-let settingsOpen = false;
+
+// ── Nav ───────────────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
+  document.getElementById('nav' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
+  if (id === 'settings') loadSettingsUI();
+}
 
 // ── Settings ──────────────────────────────────────────────────────────────────
 function cfg(key) { return localStorage.getItem(key) || ''; }
 
-function loadSettings() {
+function loadSettingsUI() {
   document.getElementById('cfgSpId').value      = cfg(LS.SP_ID);
   document.getElementById('cfgSpSecret').value  = cfg(LS.SP_SEC);
   document.getElementById('cfgAnthKey').value   = cfg(LS.ANTH);
   document.getElementById('cfgTgToken').value   = cfg(LS.TG_TOKEN);
   document.getElementById('cfgTgChannel').value = cfg(LS.TG_CHAN);
   document.getElementById('cfgPrompt').value    = cfg(LS.PROMPT) || DEFAULT_PROMPT;
+
+  const accent = cfg(LS.ACCENT) || '#e0341c';
+  document.querySelectorAll('.color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.color === accent);
+  });
+
+  const font = cfg(LS.FONT) || "'IBM Plex Sans', sans-serif";
+  document.querySelectorAll('.font-chip').forEach(c => {
+    c.classList.toggle('selected', c.dataset.font === font);
+  });
 }
 
 function saveSettings() {
@@ -526,25 +749,36 @@ function saveSettings() {
   localStorage.setItem(LS.TG_TOKEN, document.getElementById('cfgTgToken').value.trim());
   localStorage.setItem(LS.TG_CHAN,  document.getElementById('cfgTgChannel').value.trim());
   localStorage.setItem(LS.PROMPT,   document.getElementById('cfgPrompt').value.trim());
+  applyAppearance();
   toast('Сохранено', 'ok');
 }
 
-function toggleSettings() {
-  settingsOpen = !settingsOpen;
-  const el = document.getElementById('settings');
-  const btn = document.getElementById('settingsBtn');
-  el.style.display = settingsOpen ? 'block' : 'none';
-  btn.classList.toggle('active', settingsOpen);
-  if (settingsOpen) loadSettings();
+function pickColor(el) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  localStorage.setItem(LS.ACCENT, el.dataset.color);
+  applyAppearance();
 }
 
-// ── UI helpers ────────────────────────────────────────────────────────────────
-function step(n, state) {
-  const el = document.getElementById('s' + n);
-  el.className = 'step ' + state; // idle | active | done
+function pickFont(el) {
+  document.querySelectorAll('.font-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  localStorage.setItem(LS.FONT, el.dataset.font);
+  applyAppearance();
 }
 
+function applyAppearance() {
+  const accent = cfg(LS.ACCENT) || '#e0341c';
+  const font   = cfg(LS.FONT)   || "'IBM Plex Sans', sans-serif";
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--accent-hi', accent);
+  document.documentElement.style.setProperty('--ui-font', font);
+  document.body.style.fontFamily = font;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
 let toastTimer = null;
+
 function toast(msg, type = '') {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -553,32 +787,22 @@ function toast(msg, type = '') {
   toastTimer = setTimeout(() => { el.className = 'toast'; }, 2800);
 }
 
-function updateCount() {
-  const n = document.getElementById('draftText').value.length;
-  const el = document.getElementById('charCount');
-  el.textContent = n + ' / 1024';
-  el.className = 'char-count' + (n > 1024 ? ' over' : '');
-}
-
+// ── Helpers ───────────────────────────────────────────────────────────────────
 function esc(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function fmtDate(d) {
-  // "YYYY-MM-DD" | "YYYY-MM" | "YYYY"
   const p = d.split('-');
-  if (p.length === 3) return `${p[2]}.${p[1]}.${p[0]}`;
-  if (p.length === 2) return `${p[1]}.${p[0]}`;
+  if (p.length === 3) return p[2]+'.'+p[1]+'.'+p[0];
+  if (p.length === 2) return p[1]+'.'+p[0];
   return d;
 }
 
-function extractAlbumId(url) {
-  const m = url.match(/\/album\/([A-Za-z0-9]+)/);
-  return m ? m[1] : null;
-}
+function extractAlbumId(url) { const m = url.match(/\/album\/([A-Za-z0-9]+)/); return m ? m[1] : null; }
+function extractTrackId(url) { const m = url.match(/\/track\/([A-Za-z0-9]+)/); return m ? m[1] : null; }
+
+function step(n, state) { document.getElementById('s'+n).className = 'step '+state; }
 
 // ── Spotify ───────────────────────────────────────────────────────────────────
 async function spotifyToken(id, secret) {
@@ -590,38 +814,29 @@ async function spotifyToken(id, secret) {
     },
     body: 'grant_type=client_credentials'
   });
-  if (!r.ok) {
-    const e = await r.json().catch(() => ({}));
-    throw new Error('Spotify auth: ' + (e.error_description || r.status));
-  }
+  if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error('Spotify auth: '+(e.error_description||r.status)); }
   return (await r.json()).access_token;
 }
 
 async function spotifyAlbum(albumId, token) {
-  const r = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
-    headers: { 'Authorization': 'Bearer ' + token }
+  const r = await fetch('https://api.spotify.com/v1/albums/'+albumId, {
+    headers: { 'Authorization': 'Bearer '+token }
   });
-  if (!r.ok) throw new Error('Spotify album API: ' + r.status);
+  if (!r.ok) throw new Error('Spotify album: '+r.status);
   const d = await r.json();
-  return {
-    name:        d.name,
-    artist:      d.artists.map(a => a.name).join(', '),
-    releaseDate: d.release_date,
-    coverUrl:    d.images[0]?.url || '',
-    id:          d.id
-  };
+  return { name: d.name, artist: d.artists.map(a=>a.name).join(', '), releaseDate: d.release_date, coverUrl: d.images[0]?.url||'', id: d.id };
+}
+
+async function albumIdFromTrack(trackId, token) {
+  const r = await fetch('https://api.spotify.com/v1/tracks/'+trackId, { headers: { 'Authorization': 'Bearer '+token } });
+  if (!r.ok) throw new Error('Spotify track: '+r.status);
+  return (await r.json()).album.id;
 }
 
 // ── Anthropic agentic loop ────────────────────────────────────────────────────
 async function generateFacts(artist, album, apiKey, promptTpl) {
-  const userMsg = promptTpl
-    .replace(/\{artist\}/g, artist)
-    .replace(/\{album\}/g, album);
-
-  const system =
-    'Ты эксперт по музыке. Отвечай строго на русском языке. ' +
-    'Каждый факт начинай с "• ". Без вступлений, без заключений.';
-
+  const userMsg = promptTpl.replace(/\{artist\}/g, artist).replace(/\{album\}/g, album);
+  const system = 'Ты эксперт по музыке. Отвечай строго на русском языке. Каждый факт начинай с "• ". Без вступлений, без заключений.';
   let messages = [{ role: 'user', content: userMsg }];
 
   for (let iter = 0; iter < 10; iter++) {
@@ -633,104 +848,126 @@ async function generateFacts(artist, album, apiKey, promptTpl) {
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 1024,
-        system,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages
-      })
+      body: JSON.stringify({ model: 'claude-haiku-4-5', max_tokens: 1024, system, tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages })
     });
 
-    if (!resp.ok) {
-      const e = await resp.json().catch(() => ({}));
-      throw new Error('Anthropic: ' + (e.error?.message || resp.status));
-    }
+    if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error('Anthropic: '+(e.error?.message||resp.status)); }
 
     const data = await resp.json();
     messages = [...messages, { role: 'assistant', content: data.content }];
 
     if (data.stop_reason === 'end_turn') {
-      return data.content
-        .filter(b => b.type === 'text')
-        .map(b => b.text)
-        .join('\n')
-        .trim();
+      return data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
     }
 
     if (data.stop_reason === 'tool_use') {
-      const uses    = data.content.filter(b => b.type === 'tool_use');
-      const results = data.content.filter(b => b.type === 'tool_result');
-
-      const toolResultContent = uses.map(u => {
-        const existing = results.find(r => r.tool_use_id === u.id);
-        return {
-          type: 'tool_result',
-          tool_use_id: u.id,
-          content: existing?.content ?? 'Search complete'
-        };
-      });
-
-      if (toolResultContent.length) {
-        messages = [...messages, { role: 'user', content: toolResultContent }];
-      }
+      const uses = data.content.filter(b=>b.type==='tool_use');
+      const toolResultContent = uses.map(u => ({
+        type: 'tool_result',
+        tool_use_id: u.id,
+        content: 'Search complete'
+      }));
+      if (toolResultContent.length) messages = [...messages, { role: 'user', content: toolResultContent }];
     }
   }
-
   throw new Error('Превышен лимит итераций агентного цикла');
 }
 
 // ── Telegram ──────────────────────────────────────────────────────────────────
 async function tgSendPhoto(token, chatId, photo, caption) {
-  const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+  const r = await fetch('https://api.telegram.org/bot'+token+'/sendPhoto', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: chatId, photo, caption, parse_mode: 'HTML' })
   });
   const d = await r.json();
-  if (!d.ok) throw new Error('Telegram: ' + (d.description || 'unknown error'));
+  if (!d.ok) throw new Error('Telegram: '+(d.description||'unknown error'));
   return d;
 }
 
-// ── Main build ────────────────────────────────────────────────────────────────
-async function buildDraft() {
-  const url = document.getElementById('spotifyUrl').value.trim();
-  if (!url) { toast('Вставь ссылку на альбом', 'err'); return; }
+// ── Preview ───────────────────────────────────────────────────────────────────
+function renderPreview() {
+  const raw = document.getElementById('draftText').value;
 
-  const albumId = extractAlbumId(url);
-  if (!albumId) { toast('Не могу распознать ID альбома', 'err'); return; }
-
-  const spId     = cfg(LS.SP_ID);
-  const spSecret = cfg(LS.SP_SEC);
-  const anthKey  = cfg(LS.ANTH);
-  const prompt   = cfg(LS.PROMPT) || DEFAULT_PROMPT;
-
-  if (!spId || !spSecret) {
-    toast('Нет Spotify API — открой настройки', 'err');
-    if (!settingsOpen) toggleSettings();
-    return;
+  const wrap = document.getElementById('previewCoverWrap');
+  if (coverUrl) {
+    wrap.innerHTML = '<img class="tg-cover-img" src="'+coverUrl+'" alt="">';
+  } else {
+    wrap.innerHTML = '<div class="tg-cover-empty">обложка появится после сборки</div>';
   }
 
-  // Reset UI
+  let html = raw
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/&lt;(\/?)(b|i|u|s|code)&gt;/g, '<$1$2>')
+    .replace(/&lt;a href="([^"]*)"&gt;/g, '<a href="$1">')
+    .replace(/&lt;\/a&gt;/g, '</a>')
+    .replace(/\n/g, '<br>');
+
+  document.getElementById('previewText').innerHTML = html;
+
+  const now = new Date();
+  document.getElementById('previewTime').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+}
+
+function onDraftInput() {
+  updateCount();
+  renderPreview();
+}
+
+function updateCount() {
+  const n = document.getElementById('draftText').value.length;
+  const el = document.getElementById('charCount');
+  el.textContent = n + ' / 1024';
+  el.className = 'char-count' + (n > 1024 ? ' over' : '');
+}
+
+// ── Toolbar ───────────────────────────────────────────────────────────────────
+function tbWrap(open, close) {
+  const ta = document.getElementById('draftText');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.setRangeText(open + ta.value.slice(s, e) + close, s, e, 'end');
+  ta.focus(); onDraftInput();
+}
+
+function tbInsert(text) {
+  const ta = document.getElementById('draftText');
+  const pos = ta.selectionStart;
+  ta.setRangeText(text, pos, pos, 'end');
+  ta.focus(); onDraftInput();
+}
+
+// ── Build ─────────────────────────────────────────────────────────────────────
+async function buildDraft() {
+  const url = document.getElementById('spotifyUrl').value.trim();
+  if (!url) { toast('Вставь ссылку на альбом или трек', 'err'); return; }
+
+  let albumId = extractAlbumId(url);
+  const trackId = !albumId ? extractTrackId(url) : null;
+  if (!albumId && !trackId) { toast('Нужна ссылка на альбом или трек Spotify', 'err'); return; }
+
+  const spId = cfg(LS.SP_ID), spSecret = cfg(LS.SP_SEC);
+  if (!spId || !spSecret) { toast('Нет Spotify API — открой Settings', 'err'); showPage('settings'); return; }
+
+  const anthKey = cfg(LS.ANTH);
+  const prompt  = cfg(LS.PROMPT) || DEFAULT_PROMPT;
+
   document.getElementById('buildBtn').disabled = true;
   document.getElementById('result').style.display = 'none';
-  const progressEl = document.getElementById('progress');
-  progressEl.style.display = 'block';
-  [1, 2, 3, 4].forEach(n => step(n, 'idle'));
+  document.getElementById('progress').style.display = 'block';
+  [1,2,3,4].forEach(n => step(n, 'idle'));
 
   try {
-    // ① Spotify
     step(1, 'active');
     const token = await spotifyToken(spId, spSecret);
+    if (trackId) albumId = await albumIdFromTrack(trackId, token);
     const album = await spotifyAlbum(albumId, token);
     step(1, 'done');
 
-    // ② Links (no extra call needed)
     step(2, 'active');
-    const albumLink = `https://album.link/s/${albumId}`;
+    const albumLink = 'https://album.link/s/'+albumId;
     step(2, 'done');
 
-    // ③ Facts
     let facts;
     if (anthKey) {
       step(3, 'active');
@@ -738,36 +975,34 @@ async function buildDraft() {
       step(3, 'done');
     } else {
       step(3, 'done');
-      facts = '• (факты пропущены — нет Anthropic API Key в настройках)';
+      facts = '• (факты пропущены — нет Anthropic API Key)';
     }
 
-    // ④ Assemble
     step(4, 'active');
     const date = fmtDate(album.releaseDate);
 
     const draft =
-      `🎵 <b>${esc(album.artist)}</b> — <b>${esc(album.name)}</b>\n\n` +
-      `🗓 Дата выхода: ${date}\n\n` +
-      `📌 <b>Несколько фактов:</b>\n${facts}\n\n` +
-      `<a href="${albumLink}">🎧 Слушать на всех платформах</a>`;
+      '🎵 <b>'+esc(album.artist)+'</b> — <b>'+esc(album.name)+'</b>\n\n' +
+      '🗓 Дата выхода: '+date+'\n\n' +
+      '📌 <b>Несколько фактов:</b>\n'+facts+'\n\n' +
+      '<a href="'+albumLink+'">🎧 Слушать на всех платформах</a>';
 
     coverUrl = album.coverUrl;
 
     document.getElementById('metaCard').innerHTML =
-      (album.coverUrl ? `<img class="cover" src="${album.coverUrl}" alt="">` : '') +
-      `<div class="meta-info">
-        <div class="meta-title">${esc(album.name)}</div>
-        <div class="meta-sub">${esc(album.artist)}</div>
-        <div class="meta-sub">${date}</div>
-        <div class="meta-sub"><a href="${albumLink}" target="_blank">${albumLink}</a></div>
-      </div>`;
+      (album.coverUrl ? '<img class="cover" src="'+album.coverUrl+'" alt="">' : '') +
+      '<div class="meta-info">' +
+        '<div class="meta-title">'+esc(album.name)+'</div>' +
+        '<div class="meta-sub">'+esc(album.artist)+'</div>' +
+        '<div class="meta-sub">'+date+'</div>' +
+        '<div class="meta-sub"><a href="'+albumLink+'" target="_blank">'+albumLink+'</a></div>' +
+      '</div>';
 
     document.getElementById('draftText').value = draft;
-    updateCount();
+    onDraftInput();
     document.getElementById('result').style.display = 'block';
     step(4, 'done');
 
-    // Scroll to result
     setTimeout(() => {
       document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 80);
@@ -785,43 +1020,30 @@ async function copyDraft() {
   try {
     await navigator.clipboard.writeText(document.getElementById('draftText').value);
     toast('Скопировано', 'ok');
-  } catch {
-    toast('Не удалось скопировать', 'err');
-  }
+  } catch { toast('Не удалось скопировать', 'err'); }
 }
 
 async function sendPost() {
-  const token   = cfg(LS.TG_TOKEN);
-  const channel = cfg(LS.TG_CHAN);
+  const token = cfg(LS.TG_TOKEN), channel = cfg(LS.TG_CHAN);
+  if (!token || !channel) { toast('Нет Telegram-настроек', 'err'); showPage('settings'); return; }
 
-  if (!token || !channel) {
-    toast('Нет Telegram-настроек', 'err');
-    if (!settingsOpen) toggleSettings();
-    return;
-  }
-
-  const text    = document.getElementById('draftText').value;
-  const sendBtn = document.getElementById('sendBtn');
-  sendBtn.disabled = true;
-  sendBtn.textContent = 'Отправляю…';
+  const text = document.getElementById('draftText').value;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true; btn.textContent = 'Отправляю…';
 
   try {
     await tgSendPhoto(token, channel, coverUrl, text);
     toast('Отправлено!', 'ok');
-    sendBtn.textContent = '✓ Отправлено';
-    setTimeout(() => {
-      sendBtn.textContent = 'Отправить в Telegram →';
-      sendBtn.disabled = false;
-    }, 3000);
+    btn.textContent = '✓ Отправлено';
+    setTimeout(() => { btn.textContent = 'Отправить →'; btn.disabled = false; }, 3000);
   } catch (err) {
     toast(err.message, 'err');
-    sendBtn.textContent = 'Отправить в Telegram →';
-    sendBtn.disabled = false;
+    btn.textContent = 'Отправить →'; btn.disabled = false;
   }
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-loadSettings();
+applyAppearance();
 </script>
 </body>
 </html>
