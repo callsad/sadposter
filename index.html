@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ПОСТЕР</title>
+  <title>POSTER</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=Spectral:wght@400;600&family=Geologica:wght@300;400;500&display=swap');
 
@@ -37,13 +37,12 @@
 
     .wrap { max-width: 640px; margin: 0 auto; padding: 0 18px; }
 
-    /* ── Top nav ── */
+    /* ── Nav ── */
     nav {
       display: flex;
       align-items: stretch;
       border-bottom: 1px solid var(--border);
       margin-bottom: 28px;
-      padding: 0;
       position: sticky;
       top: 0;
       background: var(--bg);
@@ -57,17 +56,14 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--dim);
-      padding: 18px 18px 18px 18px;
+      padding: 18px;
       user-select: none;
       flex-shrink: 0;
     }
 
     .nav-wordmark em { color: var(--accent); font-style: normal; }
 
-    .nav-tabs {
-      display: flex;
-      margin-left: auto;
-    }
+    .nav-tabs { display: flex; margin-left: auto; }
 
     .nav-tab {
       font-family: var(--mono);
@@ -88,8 +84,7 @@
     .nav-tab::after {
       content: '';
       position: absolute;
-      bottom: -1px;
-      left: 0; right: 0;
+      bottom: -1px; left: 0; right: 0;
       height: 2px;
       background: var(--accent);
       transform: scaleX(0);
@@ -104,11 +99,7 @@
     .page.active { display: block; }
 
     /* ── URL row ── */
-    .url-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
+    .url-row { display: flex; gap: 8px; margin-bottom: 24px; }
 
     .url-input {
       flex: 1;
@@ -227,12 +218,7 @@
     .meta-sub a { color: var(--blue); text-decoration: none; }
 
     /* ── Toolbar ── */
-    .toolbar {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
+    .toolbar { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
 
     .tb-btn {
       background: var(--surface);
@@ -273,7 +259,7 @@
 
     .draft-textarea:focus { border-color: var(--border-hi); }
 
-    /* ── Live preview (always visible below textarea) ── */
+    /* ── Preview ── */
     .preview-divider {
       display: flex;
       align-items: center;
@@ -293,11 +279,7 @@
       flex-shrink: 0;
     }
 
-    .preview-divider-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .preview-divider-line { flex: 1; height: 1px; background: var(--border); }
 
     .tg-mock {
       background: #17212b;
@@ -309,12 +291,7 @@
       margin-bottom: 8px;
     }
 
-    .tg-cover-img {
-      width: 100%;
-      max-height: 260px;
-      object-fit: cover;
-      display: block;
-    }
+    .tg-cover-img { width: 100%; max-height: 260px; object-fit: cover; display: block; }
 
     .tg-cover-empty {
       height: 80px;
@@ -373,15 +350,205 @@
       font-size: 11px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 14px 16px;
+      padding: 14px 14px;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       transition: color .15s;
+      white-space: nowrap;
     }
 
     .btn-secondary:active { color: var(--text); }
 
-    .btn-send {
+    .btn-send-now {
+      flex: 1;
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border-hi);
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 14px;
+      cursor: pointer;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .btn-send-now:active:not(:disabled) { background: var(--border-hi); }
+    .btn-send-now:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .btn-schedule {
+      flex: 1.4;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 14px;
+      cursor: pointer;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .btn-schedule:active:not(:disabled) { background: var(--accent-hi); }
+    .btn-schedule:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── Schedule modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-sheet {
+      background: #1c1c1e;
+      border-radius: 14px 14px 0 0;
+      width: 100%;
+      max-width: 640px;
+      padding: 0 0 40px;
+      animation: slideUp .22s ease;
+    }
+
+    @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal-handle {
+      width: 36px; height: 4px;
+      background: #48484a;
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px 6px;
+    }
+
+    .modal-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 4px 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── Wheel picker ── */
+    .picker-wrap {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+      padding: 0 18px;
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    /* Selection highlight bar */
+    .picker-wrap::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 18px; right: 18px;
+      transform: translateY(-50%);
+      height: 40px;
+      background: rgba(255,255,255,.06);
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Fade masks */
+    .picker-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, #1c1c1e 0%, transparent 35%, transparent 65%, #1c1c1e 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .picker-col {
+      flex: 1;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 80px 0;
+    }
+
+    .picker-col::-webkit-scrollbar { display: none; }
+
+    .picker-item {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      scroll-snap-align: center;
+      font-family: -apple-system, sans-serif;
+      font-size: 18px;
+      color: var(--dim);
+      cursor: pointer;
+      transition: color .1s;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    /* Date col wider */
+    .picker-col.col-date { flex: 2.2; }
+    .picker-col.col-date .picker-item { justify-content: flex-start; padding-left: 12px; }
+    .picker-col.col-hour .picker-item,
+    .picker-col.col-min .picker-item { font-variant-numeric: tabular-nums; }
+    .picker-col.col-ampm .picker-item { font-size: 15px; }
+
+    /* Separator between hour and min */
+    .picker-sep {
+      display: flex;
+      align-items: center;
+      font-family: -apple-system, sans-serif;
+      font-size: 20px;
+      color: var(--text);
+      padding: 0 2px;
+      padding-bottom: 0;
+      z-index: 3;
+    }
+
+    .modal-confirm {
+      display: flex;
+      gap: 10px;
+      padding: 16px 18px 0;
+    }
+
+    .btn-confirm {
       flex: 1;
       background: var(--accent);
       color: #fff;
@@ -392,19 +559,23 @@
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 14px 20px;
+      padding: 14px;
       cursor: pointer;
-      transition: background .15s;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .btn-send:active:not(:disabled) { background: var(--accent-hi); }
-    .btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-confirm:active { background: var(--accent-hi); }
 
-    /* ── Settings page ── */
-    .settings-section {
-      margin-bottom: 32px;
+    .schedule-summary {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--dim);
+      text-align: center;
+      padding: 8px 18px 0;
     }
+
+    /* ── Settings ── */
+    .settings-section { margin-bottom: 32px; }
 
     .settings-title {
       font-family: var(--mono);
@@ -418,7 +589,6 @@
     }
 
     .field { margin-bottom: 12px; }
-
     .field-row { display: flex; gap: 10px; }
     .field-row .field { flex: 1; }
 
@@ -447,52 +617,9 @@
 
     .field input:focus,
     .field textarea:focus { border-color: var(--border-hi); }
-
     .field textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
 
-    /* Appearance */
-    .color-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 4px;
-    }
-
-    .color-swatch {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: border-color .15s, transform .12s;
-      -webkit-tap-highlight-color: transparent;
-      flex-shrink: 0;
-    }
-
-    .color-swatch:active { transform: scale(.9); }
-    .color-swatch.selected { border-color: var(--text); }
-
-    .font-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .font-chip {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 8px 14px;
-      font-size: 12px;
-      color: var(--dim);
-      cursor: pointer;
-      transition: color .12s, border-color .12s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .font-chip:active { color: var(--text); border-color: var(--border-hi); }
-    .font-chip.selected { color: var(--text); border-color: var(--accent); }
-
-    /* ── Toggle ── */
+    /* Toggle */
     .toggle-row {
       display: flex;
       align-items: center;
@@ -504,19 +631,9 @@
       margin-bottom: 12px;
     }
 
-    .toggle-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--dim);
-    }
+    .toggle-label { font-family: var(--mono); font-size: 11px; color: var(--dim); }
 
-    .toggle {
-      position: relative;
-      width: 40px;
-      height: 22px;
-      flex-shrink: 0;
-    }
-
+    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
     .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
 
     .toggle-track {
@@ -539,18 +656,44 @@
       transition: transform .2s, background .2s;
     }
 
-    .toggle input:checked + .toggle-track {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .toggle input:checked + .toggle-track::after {
-      transform: translateX(18px);
-      background: #fff;
-    }
+    .toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(18px); background: #fff; }
 
     #promptField { transition: opacity .2s; }
     #promptField.disabled { opacity: 0.35; pointer-events: none; }
+
+    /* Appearance */
+    .color-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+
+    .color-swatch {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color .15s, transform .12s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .color-swatch:active { transform: scale(.9); }
+    .color-swatch.selected { border-color: var(--text); }
+
+    .font-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .font-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--dim);
+      cursor: pointer;
+      transition: color .12s, border-color .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .font-chip:active { color: var(--text); border-color: var(--border-hi); }
+    .font-chip.selected { color: var(--text); border-color: var(--accent); }
 
     .btn-save {
       background: transparent;
@@ -595,9 +738,8 @@
 </head>
 <body>
 
-<!-- ── Nav ── -->
 <nav>
-  <div class="nav-wordmark">ПОСТЕР<em>.</em>release</div>
+  <div class="nav-wordmark">POSTER<em>.</em>release</div>
   <div class="nav-tabs">
     <button class="nav-tab active" id="navCompose" onclick="showPage('compose')">Compose</button>
     <button class="nav-tab" id="navSettings" onclick="showPage('settings')">Settings</button>
@@ -614,18 +756,18 @@
         type="text"
         id="spotifyUrl"
         class="url-input"
-        placeholder="https://open.spotify.com/album/… или /track/…"
+        placeholder="https://open.spotify.com/album/… or /track/…"
         onkeydown="if(event.key==='Enter')buildDraft()"
         autocomplete="off" autocorrect="off" spellcheck="false"
       />
-      <button class="btn-build" id="buildBtn" onclick="buildDraft()">Собрать</button>
+      <button class="btn-build" id="buildBtn" onclick="buildDraft()">Build</button>
     </div>
 
     <div id="progress">
-      <div class="step" id="s1"><div class="step-dot"></div><span>Получение данных Spotify</span></div>
-      <div class="step" id="s2"><div class="step-dot"></div><span>Сборка ссылок</span></div>
-      <div class="step" id="s3"><div class="step-dot"></div><span>Генерация фактов (AI + web search)</span></div>
-      <div class="step" id="s4"><div class="step-dot"></div><span>Сборка черновика</span></div>
+      <div class="step" id="s1"><div class="step-dot"></div><span>Fetching Spotify data</span></div>
+      <div class="step" id="s2"><div class="step-dot"></div><span>Building links</span></div>
+      <div class="step" id="s3"><div class="step-dot"></div><span>Generating facts (AI + web search)</span></div>
+      <div class="step" id="s4"><div class="step-dot"></div><span>Assembling draft</span></div>
     </div>
 
     <div id="result">
@@ -635,7 +777,7 @@
         <button class="tb-btn" onclick="tbWrap('<b>','</b>')"><b>B</b></button>
         <button class="tb-btn" onclick="tbWrap('<i>','</i>')"><i>I</i></button>
         <button class="tb-btn" onclick="tbWrap('<code>','</code>')">{ }</button>
-        <button class="tb-btn" onclick="tbInsert('\n• ')">• пункт</button>
+        <button class="tb-btn" onclick="tbInsert('\n• ')">• item</button>
         <button class="tb-btn" onclick="tbInsert('\n\n')">↵↵</button>
         <button class="tb-btn" onclick="tbInsert('🎵')">🎵</button>
         <button class="tb-btn" onclick="tbInsert('🗓')">🗓</button>
@@ -650,13 +792,12 @@
         autocomplete="off" autocorrect="off" spellcheck="false"
       ></textarea>
 
-      <!-- Live preview stitched to bottom of textarea -->
       <div class="preview-divider">
-        <div class="preview-divider-label">Превью</div>
+        <div class="preview-divider-label">Preview</div>
         <div class="preview-divider-line"></div>
       </div>
       <div class="tg-mock">
-        <div id="previewCoverWrap"><div class="tg-cover-empty">обложка появится после сборки</div></div>
+        <div id="previewCoverWrap"><div class="tg-cover-empty">cover appears after build</div></div>
         <div class="tg-body">
           <div class="tg-text" id="previewText"></div>
           <div class="tg-time" id="previewTime"></div>
@@ -668,8 +809,9 @@
         <div class="parse-hint">parse_mode: HTML</div>
       </div>
       <div class="action-row">
-        <button class="btn-secondary" onclick="copyDraft()">Копировать</button>
-        <button class="btn-send" id="sendBtn" onclick="sendPost()">Отправить →</button>
+        <button class="btn-secondary" onclick="copyDraft()">Copy</button>
+        <button class="btn-send-now" id="sendNowBtn" onclick="sendNow()">Send now</button>
+        <button class="btn-schedule" id="scheduleBtn" onclick="openScheduler()">⏱ Schedule</button>
       </div>
     </div>
 
@@ -709,7 +851,7 @@
       </div>
 
       <div class="toggle-row">
-        <span class="toggle-label">Генерация фактов через AI</span>
+        <span class="toggle-label">Generate facts via AI</span>
         <label class="toggle">
           <input type="checkbox" id="cfgFactsEnabled" onchange="togglePromptField()">
           <span class="toggle-track"></span>
@@ -717,16 +859,16 @@
       </div>
 
       <div id="promptField" class="field">
-        <label>Промпт — {artist} {album}</label>
+        <label>Facts prompt — {artist} {album}</label>
         <textarea id="cfgPrompt"></textarea>
       </div>
     </div>
 
     <div class="settings-section">
-      <div class="settings-title">Внешний вид</div>
+      <div class="settings-title">Appearance</div>
 
       <div class="field">
-        <label>Акцентный цвет</label>
+        <label>Accent colour</label>
         <div class="color-row" id="colorRow">
           <div class="color-swatch selected" data-color="#e0341c" style="background:#e0341c" onclick="pickColor(this)"></div>
           <div class="color-swatch" data-color="#e05c1c" style="background:#e05c1c" onclick="pickColor(this)"></div>
@@ -740,7 +882,7 @@
       </div>
 
       <div class="field">
-        <label>Шрифт интерфейса</label>
+        <label>UI font</label>
         <div class="font-row" id="fontRow">
           <div class="font-chip selected" data-font="'IBM Plex Sans', sans-serif" style="font-family:'IBM Plex Sans',sans-serif" onclick="pickFont(this)">IBM Plex</div>
           <div class="font-chip" data-font="'Geologica', sans-serif" style="font-family:'Geologica',sans-serif" onclick="pickFont(this)">Geologica</div>
@@ -750,10 +892,40 @@
       </div>
     </div>
 
-    <button class="btn-save" onclick="saveSettings()">Сохранить</button>
+    <button class="btn-save" onclick="saveSettings()">Save</button>
 
   </div>
 
+</div>
+
+<!-- ══ Schedule modal ══ -->
+<div class="modal-overlay" id="scheduleModal" onclick="overlayClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Schedule post</div>
+      <button class="modal-close" onclick="closeScheduler()">Cancel</button>
+    </div>
+
+    <div class="picker-wrap">
+      <!-- Date column -->
+      <div class="picker-col col-date" id="colDate"></div>
+      <!-- Hour -->
+      <div class="picker-col col-hour" id="colHour"></div>
+      <!-- Separator -->
+      <div class="picker-sep">:</div>
+      <!-- Minute -->
+      <div class="picker-col col-min" id="colMin"></div>
+      <!-- AM/PM -->
+      <div class="picker-col col-ampm" id="colAmpm"></div>
+    </div>
+
+    <div class="schedule-summary" id="scheduleSummary"></div>
+
+    <div class="modal-confirm">
+      <button class="btn-confirm" onclick="confirmSchedule()">Schedule →</button>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -761,9 +933,8 @@
 <script>
 // ── Constants ─────────────────────────────────────────────────────────────────
 const DEFAULT_PROMPT =
-  'Найди 3–5 интересных фактов об альбоме "{album}" исполнителя "{artist}" для публикации ' +
-  'в русскоязычном Telegram-канале о музыке. Пиши на русском языке. ' +
-  'Каждый факт начинай с "• ". Только факты, без вступления и заключения.';
+  'Find 3–5 interesting facts about the album "{album}" by "{artist}" for a Russian-language ' +
+  'Telegram music channel. Write in Russian. Start each fact with "• ". Facts only, no intro or outro.';
 
 const LS = {
   SP_ID:    'sp_client_id',
@@ -777,15 +948,15 @@ const LS = {
   FACTS_ON: 'facts_enabled',
 };
 
-// ── State ─────────────────────────────────────────────────────────────────────
 let coverUrl = '';
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
-  document.getElementById('nav' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
+  const key = id.charAt(0).toUpperCase() + id.slice(1);
+  document.getElementById('page' + key).classList.add('active');
+  document.getElementById('nav'  + key).classList.add('active');
   if (id === 'settings') loadSettingsUI();
 }
 
@@ -800,15 +971,17 @@ function loadSettingsUI() {
   document.getElementById('cfgTgChannel').value = cfg(LS.TG_CHAN);
   document.getElementById('cfgPrompt').value    = cfg(LS.PROMPT) || DEFAULT_PROMPT;
 
+  const factsOn = cfg(LS.FACTS_ON) !== 'false';
+  document.getElementById('cfgFactsEnabled').checked = factsOn;
+  document.getElementById('promptField').classList.toggle('disabled', !factsOn);
+
   const accent = cfg(LS.ACCENT) || '#e0341c';
-  document.querySelectorAll('.color-swatch').forEach(s => {
-    s.classList.toggle('selected', s.dataset.color === accent);
-  });
+  document.querySelectorAll('.color-swatch').forEach(s =>
+    s.classList.toggle('selected', s.dataset.color === accent));
 
   const font = cfg(LS.FONT) || "'IBM Plex Sans', sans-serif";
-  document.querySelectorAll('.font-chip').forEach(c => {
-    c.classList.toggle('selected', c.dataset.font === font);
-  });
+  document.querySelectorAll('.font-chip').forEach(c =>
+    c.classList.toggle('selected', c.dataset.font === font));
 }
 
 function saveSettings() {
@@ -820,7 +993,13 @@ function saveSettings() {
   localStorage.setItem(LS.PROMPT,   document.getElementById('cfgPrompt').value.trim());
   localStorage.setItem(LS.FACTS_ON, document.getElementById('cfgFactsEnabled').checked ? 'true' : 'false');
   applyAppearance();
-  toast('Сохранено', 'ok');
+  toast('Saved', 'ok');
+}
+
+function togglePromptField() {
+  const on = document.getElementById('cfgFactsEnabled').checked;
+  document.getElementById('promptField').classList.toggle('disabled', !on);
+  localStorage.setItem(LS.FACTS_ON, on ? 'true' : 'false');
 }
 
 function pickColor(el) {
@@ -837,24 +1016,16 @@ function pickFont(el) {
   applyAppearance();
 }
 
-function togglePromptField() {
-  const on = document.getElementById('cfgFactsEnabled').checked;
-  document.getElementById('promptField').classList.toggle('disabled', !on);
-  localStorage.setItem(LS.FACTS_ON, on ? 'true' : 'false');
-}
-
 function applyAppearance() {
   const accent = cfg(LS.ACCENT) || '#e0341c';
   const font   = cfg(LS.FONT)   || "'IBM Plex Sans', sans-serif";
   document.documentElement.style.setProperty('--accent', accent);
   document.documentElement.style.setProperty('--accent-hi', accent);
-  document.documentElement.style.setProperty('--ui-font', font);
   document.body.style.fontFamily = font;
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
 let toastTimer = null;
-
 function toast(msg, type = '') {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -864,9 +1035,7 @@ function toast(msg, type = '') {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function fmtDate(d) {
   const p = d.split('-');
@@ -877,17 +1046,13 @@ function fmtDate(d) {
 
 function extractAlbumId(url) { const m = url.match(/\/album\/([A-Za-z0-9]+)/); return m ? m[1] : null; }
 function extractTrackId(url) { const m = url.match(/\/track\/([A-Za-z0-9]+)/); return m ? m[1] : null; }
-
 function step(n, state) { document.getElementById('s'+n).className = 'step '+state; }
 
 // ── Spotify ───────────────────────────────────────────────────────────────────
 async function spotifyToken(id, secret) {
   const r = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
-    headers: {
-      'Authorization': 'Basic ' + btoa(id + ':' + secret),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
+    headers: { 'Authorization': 'Basic '+btoa(id+':'+secret), 'Content-Type': 'application/x-www-form-urlencoded' },
     body: 'grant_type=client_credentials'
   });
   if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error('Spotify auth: '+(e.error_description||r.status)); }
@@ -895,9 +1060,7 @@ async function spotifyToken(id, secret) {
 }
 
 async function spotifyAlbum(albumId, token) {
-  const r = await fetch('https://api.spotify.com/v1/albums/'+albumId, {
-    headers: { 'Authorization': 'Bearer '+token }
-  });
+  const r = await fetch('https://api.spotify.com/v1/albums/'+albumId, { headers: { 'Authorization': 'Bearer '+token } });
   if (!r.ok) throw new Error('Spotify album: '+r.status);
   const d = await r.json();
   return { name: d.name, artist: d.artists.map(a=>a.name).join(', '), releaseDate: d.release_date, coverUrl: d.images[0]?.url||'', id: d.id };
@@ -909,13 +1072,13 @@ async function albumIdFromTrack(trackId, token) {
   return (await r.json()).album.id;
 }
 
-// ── Anthropic agentic loop ────────────────────────────────────────────────────
+// ── Anthropic ─────────────────────────────────────────────────────────────────
 async function generateFacts(artist, album, apiKey, promptTpl) {
   const userMsg = promptTpl.replace(/\{artist\}/g, artist).replace(/\{album\}/g, album);
-  const system = 'Ты эксперт по музыке. Отвечай строго на русском языке. Каждый факт начинай с "• ". Без вступлений, без заключений.';
+  const system = 'You are a music expert. Reply strictly in Russian. Start each fact with "• ". No intro or outro.';
   let messages = [{ role: 'user', content: userMsg }];
 
-  for (let iter = 0; iter < 10; iter++) {
+  for (let i = 0; i < 10; i++) {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -928,25 +1091,19 @@ async function generateFacts(artist, album, apiKey, promptTpl) {
     });
 
     if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error('Anthropic: '+(e.error?.message||resp.status)); }
-
     const data = await resp.json();
     messages = [...messages, { role: 'assistant', content: data.content }];
 
-    if (data.stop_reason === 'end_turn') {
+    if (data.stop_reason === 'end_turn')
       return data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
-    }
 
     if (data.stop_reason === 'tool_use') {
       const uses = data.content.filter(b=>b.type==='tool_use');
-      const toolResultContent = uses.map(u => ({
-        type: 'tool_result',
-        tool_use_id: u.id,
-        content: 'Search complete'
-      }));
-      if (toolResultContent.length) messages = [...messages, { role: 'user', content: toolResultContent }];
+      const results = uses.map(u => ({ type: 'tool_result', tool_use_id: u.id, content: 'Search complete' }));
+      if (results.length) messages = [...messages, { role: 'user', content: results }];
     }
   }
-  throw new Error('Превышен лимит итераций агентного цикла');
+  throw new Error('Agent loop limit exceeded');
 }
 
 // ── Telegram ──────────────────────────────────────────────────────────────────
@@ -966,13 +1123,11 @@ function renderPreview() {
   const raw = document.getElementById('draftText').value;
 
   const wrap = document.getElementById('previewCoverWrap');
-  if (coverUrl) {
-    wrap.innerHTML = '<img class="tg-cover-img" src="'+coverUrl+'" alt="">';
-  } else {
-    wrap.innerHTML = '<div class="tg-cover-empty">обложка появится после сборки</div>';
-  }
+  wrap.innerHTML = coverUrl
+    ? '<img class="tg-cover-img" src="'+coverUrl+'" alt="">'
+    : '<div class="tg-cover-empty">cover appears after build</div>';
 
-  let html = raw
+  const html = raw
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/&lt;(\/?)(b|i|u|s|code)&gt;/g, '<$1$2>')
     .replace(/&lt;a href="([^"]*)"&gt;/g, '<a href="$1">')
@@ -986,10 +1141,7 @@ function renderPreview() {
     String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 }
 
-function onDraftInput() {
-  updateCount();
-  renderPreview();
-}
+function onDraftInput() { updateCount(); renderPreview(); }
 
 function updateCount() {
   const n = document.getElementById('draftText').value.length;
@@ -1008,22 +1160,21 @@ function tbWrap(open, close) {
 
 function tbInsert(text) {
   const ta = document.getElementById('draftText');
-  const pos = ta.selectionStart;
-  ta.setRangeText(text, pos, pos, 'end');
+  ta.setRangeText(text, ta.selectionStart, ta.selectionStart, 'end');
   ta.focus(); onDraftInput();
 }
 
 // ── Build ─────────────────────────────────────────────────────────────────────
 async function buildDraft() {
   const url = document.getElementById('spotifyUrl').value.trim();
-  if (!url) { toast('Вставь ссылку на альбом или трек', 'err'); return; }
+  if (!url) { toast('Paste a Spotify album or track link', 'err'); return; }
 
   let albumId = extractAlbumId(url);
   const trackId = !albumId ? extractTrackId(url) : null;
-  if (!albumId && !trackId) { toast('Нужна ссылка на альбом или трек Spotify', 'err'); return; }
+  if (!albumId && !trackId) { toast('Need a Spotify album or track URL', 'err'); return; }
 
   const spId = cfg(LS.SP_ID), spSecret = cfg(LS.SP_SEC);
-  if (!spId || !spSecret) { toast('Нет Spotify API — открой Settings', 'err'); showPage('settings'); return; }
+  if (!spId || !spSecret) { toast('No Spotify credentials — open Settings', 'err'); showPage('settings'); return; }
 
   const anthKey = cfg(LS.ANTH);
   const prompt  = cfg(LS.PROMPT) || DEFAULT_PROMPT;
@@ -1044,30 +1195,26 @@ async function buildDraft() {
     const albumLink = 'https://album.link/s/'+albumId;
     step(2, 'done');
 
-    let facts;
     const factsEnabled = cfg(LS.FACTS_ON) !== 'false';
+    let facts = '';
     if (factsEnabled && anthKey) {
       step(3, 'active');
       facts = await generateFacts(album.artist, album.name, anthKey, prompt);
       step(3, 'done');
     } else {
       step(3, 'done');
-      facts = factsEnabled
-        ? '• (факты пропущены — нет Anthropic API Key в Settings)'
-        : '';
+      if (factsEnabled) facts = '• (facts skipped — no Anthropic API Key in Settings)';
     }
 
     step(4, 'active');
     const date = fmtDate(album.releaseDate);
+    const factsBlock = facts ? '📌 <b>A few facts:</b>\n'+facts+'\n\n' : '';
 
-    const factsBlock = facts
-      ? '📌 <b>Несколько фактов:</b>\n'+facts+'\n\n'
-      : '';
     const draft =
       '🎵 <b>'+esc(album.artist)+'</b> — <b>'+esc(album.name)+'</b>\n\n' +
-      '🗓 Дата выхода: '+date+'\n\n' +
+      '🗓 Release date: '+date+'\n\n' +
       factsBlock +
-      '<a href="'+albumLink+'">🎧 Слушать на всех платформах</a>';
+      '<a href="'+albumLink+'">🎧 Listen on all platforms</a>';
 
     coverUrl = album.coverUrl;
 
@@ -1097,31 +1244,171 @@ async function buildDraft() {
   }
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────────
-async function copyDraft() {
-  try {
-    await navigator.clipboard.writeText(document.getElementById('draftText').value);
-    toast('Скопировано', 'ok');
-  } catch { toast('Не удалось скопировать', 'err'); }
-}
-
-async function sendPost() {
+// ── Send now ──────────────────────────────────────────────────────────────────
+async function sendNow() {
   const token = cfg(LS.TG_TOKEN), channel = cfg(LS.TG_CHAN);
-  if (!token || !channel) { toast('Нет Telegram-настроек', 'err'); showPage('settings'); return; }
+  if (!token || !channel) { toast('No Telegram credentials — open Settings', 'err'); showPage('settings'); return; }
 
   const text = document.getElementById('draftText').value;
-  const btn = document.getElementById('sendBtn');
-  btn.disabled = true; btn.textContent = 'Отправляю…';
+  const btn = document.getElementById('sendNowBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
 
   try {
     await tgSendPhoto(token, channel, coverUrl, text);
-    toast('Отправлено!', 'ok');
-    btn.textContent = '✓ Отправлено';
-    setTimeout(() => { btn.textContent = 'Отправить →'; btn.disabled = false; }, 3000);
+    toast('Sent!', 'ok');
+    btn.textContent = '✓ Sent';
+    setTimeout(() => { btn.textContent = 'Send now'; btn.disabled = false; }, 3000);
   } catch (err) {
     toast(err.message, 'err');
-    btn.textContent = 'Отправить →'; btn.disabled = false;
+    btn.textContent = 'Send now'; btn.disabled = false;
   }
+}
+
+// ── Copy ──────────────────────────────────────────────────────────────────────
+async function copyDraft() {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('draftText').value);
+    toast('Copied', 'ok');
+  } catch { toast('Copy failed', 'err'); }
+}
+
+// ── Scheduler ─────────────────────────────────────────────────────────────────
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Default = nearest Tue (2) or Thu (4), 8:00 AM
+function nearestTueThu() {
+  const d = new Date();
+  d.setHours(8, 0, 0, 0);
+  d.setDate(d.getDate() + 1); // start from tomorrow
+  while (d.getDay() !== 2 && d.getDay() !== 4) d.setDate(d.getDate() + 1);
+  return d;
+}
+
+// Build date list: today + 60 days
+function buildDateItems() {
+  const items = [];
+  const now = new Date(); now.setHours(0,0,0,0);
+  for (let i = 0; i <= 60; i++) {
+    const d = new Date(now); d.setDate(now.getDate() + i);
+    items.push(d);
+  }
+  return items;
+}
+
+let pickerDates = [];
+let pickerState = { dateIdx: 0, hour: 8, min: 0, ampm: 'AM' };
+
+function openScheduler() {
+  const token = cfg(LS.TG_TOKEN), channel = cfg(LS.TG_CHAN);
+  if (!token || !channel) { toast('No Telegram credentials — open Settings', 'err'); showPage('settings'); return; }
+
+  pickerDates = buildDateItems();
+  const def = nearestTueThu();
+
+  // Find default date index
+  const defDay = new Date(def); defDay.setHours(0,0,0,0);
+  pickerState.dateIdx = pickerDates.findIndex(d => d.getTime() === defDay.getTime());
+  if (pickerState.dateIdx < 0) pickerState.dateIdx = 0;
+
+  pickerState.hour  = def.getHours() % 12 || 12; // 8
+  pickerState.min   = def.getMinutes();           // 0
+  pickerState.ampm  = def.getHours() < 12 ? 'AM' : 'PM';
+
+  buildCol('colDate', pickerDates.map((d,i) => {
+    const isToday = i === 0;
+    return isToday ? 'Today' : DAYS[d.getDay()]+' '+MONTHS[d.getMonth()]+' '+d.getDate();
+  }), pickerState.dateIdx, v => { pickerState.dateIdx = v; updateSummary(); });
+
+  buildCol('colHour', Array.from({length:12},(_,i)=>String(i+1)), pickerState.hour-1, v => { pickerState.hour = v+1; updateSummary(); });
+  buildCol('colMin',  Array.from({length:60},(_,i)=>String(i).padStart(2,'0')), pickerState.min, v => { pickerState.min = v; updateSummary(); });
+  buildCol('colAmpm', ['AM','PM'], pickerState.ampm === 'PM' ? 1 : 0, v => { pickerState.ampm = v===0?'AM':'PM'; updateSummary(); });
+
+  updateSummary();
+  document.getElementById('scheduleModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function buildCol(colId, items, selectedIdx, onChange) {
+  const col = document.getElementById(colId);
+  col.innerHTML = '';
+  items.forEach((label, idx) => {
+    const el = document.createElement('div');
+    el.className = 'picker-item';
+    el.textContent = label;
+    col.appendChild(el);
+  });
+
+  // Scroll to selected
+  requestAnimationFrame(() => {
+    col.scrollTop = selectedIdx * 40;
+  });
+
+  // On scroll snap, detect which item is centred
+  let scrollTimer;
+  col.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const idx = Math.round(col.scrollTop / 40);
+      onChange(Math.max(0, Math.min(idx, items.length - 1)));
+    }, 80);
+  }, { passive: true });
+}
+
+function updateSummary() {
+  const d = pickerDates[pickerState.dateIdx];
+  if (!d) return;
+  const h = pickerState.hour;
+  const m = String(pickerState.min).padStart(2,'0');
+  const ap = pickerState.ampm;
+  const label = DAYS[d.getDay()]+', '+MONTHS[d.getMonth()]+' '+d.getDate()+' at '+h+':'+m+' '+ap;
+  document.getElementById('scheduleSummary').textContent = label;
+}
+
+function closeScheduler() {
+  document.getElementById('scheduleModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function overlayClick(e) {
+  if (e.target === document.getElementById('scheduleModal')) closeScheduler();
+}
+
+async function confirmSchedule() {
+  const d = pickerDates[pickerState.dateIdx];
+  if (!d) return;
+
+  let h24 = pickerState.hour % 12;
+  if (pickerState.ampm === 'PM') h24 += 12;
+
+  const sendAt = new Date(d);
+  sendAt.setHours(h24, pickerState.min, 0, 0);
+
+  const msUntil = sendAt.getTime() - Date.now();
+
+  if (msUntil < 0) { toast('That time is in the past', 'err'); return; }
+
+  const token   = cfg(LS.TG_TOKEN);
+  const channel = cfg(LS.TG_CHAN);
+  const text    = document.getElementById('draftText').value;
+  const cover   = coverUrl;
+
+  const btn = document.querySelector('.btn-confirm');
+  btn.textContent = 'Scheduled ✓';
+  btn.disabled = true;
+
+  setTimeout(async () => {
+    try {
+      await tgSendPhoto(token, channel, cover, text);
+      toast('Scheduled post sent!', 'ok');
+    } catch(err) {
+      toast('Scheduled send failed: '+err.message, 'err');
+    }
+  }, msUntil);
+
+  toast('Scheduled for '+document.getElementById('scheduleSummary').textContent, 'ok');
+  closeScheduler();
+  setTimeout(() => { btn.textContent = 'Schedule →'; btn.disabled = false; }, 3000);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
