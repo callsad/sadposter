@@ -1215,15 +1215,29 @@ async function generateFacts(artist, album, apiKey, promptTpl) {
 }
 
 // ── Telegram ──────────────────────────────────────────────────────────────────
-async function tgSendPhoto(token, chatId, photo, caption) {
-  const r = await fetch('https://api.telegram.org/bot'+token+'/sendPhoto', {
+async function tgSend(token, chatId, photoUrl, caption) {
+  // Try sendPhoto first if we have a cover
+  if (photoUrl) {
+    const r = await fetch('https://api.telegram.org/bot'+token+'/sendPhoto', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, photo: photoUrl, caption, parse_mode: 'HTML' })
+    });
+    const d = await r.json();
+    if (d.ok) return d;
+    // Photo failed — log and fall through to sendMessage
+    console.warn('sendPhoto failed:', d.description, '— falling back to sendMessage');
+  }
+
+  // Fallback: text-only
+  const r2 = await fetch('https://api.telegram.org/bot'+token+'/sendMessage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, photo, caption, parse_mode: 'HTML' })
+    body: JSON.stringify({ chat_id: chatId, text: caption, parse_mode: 'HTML', disable_web_page_preview: false })
   });
-  const d = await r.json();
-  if (!d.ok) throw new Error('Telegram: '+(d.description||'unknown error'));
-  return d;
+  const d2 = await r2.json();
+  if (!d2.ok) throw new Error('Telegram: '+d2.description+' (error_code '+d2.error_code+')');
+  return d2;
 }
 
 // ── Preview ───────────────────────────────────────────────────────────────────
@@ -1232,7 +1246,7 @@ function renderPreview() {
 
   const wrap = document.getElementById('previewCoverWrap');
   wrap.innerHTML = coverUrl
-    ? '<img class="tg-cover-img" src="'+coverUrl+'" alt="">'
+    ? '<img class="tg-cover-img" src="'+coverUrl+'" alt="" onerror="this.parentNode.innerHTML=\'<div class=tg-cover-empty>cover unavailable</div>\'">' 
     : '<div class="tg-cover-empty">cover appears after build</div>';
 
   const html = raw
@@ -1328,7 +1342,7 @@ async function buildDraft() {
     };
 
     document.getElementById('metaCard').innerHTML =
-      (album.coverUrl ? '<img class="cover" src="'+album.coverUrl+'" alt="">' : '') +
+      (album.coverUrl ? '<img class="cover" src="'+album.coverUrl+'" alt="" onerror="this.style.display=\'none\'">' : '') +
       '<div class="meta-info">' +
         '<div class="meta-title">'+esc(album.name)+'</div>' +
         '<div class="meta-sub">'+esc(album.artist)+'</div>' +
@@ -1452,7 +1466,7 @@ async function sendNow() {
   btn.disabled = true; btn.textContent = 'Sending…';
 
   try {
-    await tgSendPhoto(token, channel, coverUrl, text);
+    await tgSend(token, channel, coverUrl, text);
     toast('Sent!', 'ok');
     btn.textContent = '✓ Sent';
     setTimeout(() => { btn.textContent = 'Send now'; btn.disabled = false; }, 3000);
@@ -1597,7 +1611,7 @@ async function confirmSchedule() {
 
   setTimeout(async () => {
     try {
-      await tgSendPhoto(token, channel, cover, text);
+      await tgSend(token, channel, cover, text);
       toast('Scheduled post sent!', 'ok');
     } catch(err) {
       toast('Scheduled send failed: '+err.message, 'err');
