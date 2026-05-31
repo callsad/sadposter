@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>POSTER</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=Spectral:wght@400;600&family=Geologica:wght@300;400;500&display=swap');
@@ -108,7 +108,7 @@
       border-radius: var(--r);
       color: var(--text);
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: 16px;
       padding: 13px 14px;
       outline: none;
       transition: border-color .15s;
@@ -248,7 +248,7 @@
       border-bottom: none;
       color: var(--text);
       font-family: var(--mono);
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.75;
       padding: 14px;
       outline: none;
@@ -574,6 +574,90 @@
       padding: 8px 18px 0;
     }
 
+
+    /* ── Post fields ── */
+    .post-fields {
+      margin-bottom: 10px;
+    }
+
+    .pf-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 5px;
+    }
+
+    .pf-row.editing {
+      border-color: var(--border-hi);
+    }
+
+    .pf-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim2);
+      flex-shrink: 0;
+      width: 42px;
+      padding-top: 2px;
+    }
+
+    .pf-value {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-width: 0;
+    }
+
+    .pf-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      resize: none;
+      width: 100%;
+      min-height: 22px;
+      padding: 0;
+    }
+
+    .pf-edit-btn {
+      background: none;
+      border: none;
+      color: var(--dim2);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 0 0 4px;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: color .12s;
+    }
+
+    .pf-edit-btn:active { color: var(--text); }
+
+    .pf-row.editing .pf-edit-btn { color: var(--accent); }
+
+    .pf-review-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim2);
+      margin-bottom: 6px;
+    }
+
     /* ── Settings ── */
     .settings-section { margin-bottom: 32px; }
 
@@ -773,16 +857,38 @@
     <div id="result">
       <div class="meta-card" id="metaCard"></div>
 
+      <!-- Fixed post fields -->
+      <div class="post-fields" id="postFields" style="display:none">
+        <div class="pf-row" id="pfRowTitle">
+          <div class="pf-label">Title</div>
+          <div class="pf-value" id="pfValTitle"></div>
+          <button class="pf-edit-btn" onclick="togglePfEdit('Title')">edit</button>
+        </div>
+        <div class="pf-row" id="pfRowDate">
+          <div class="pf-label">Date</div>
+          <div class="pf-value" id="pfValDate"></div>
+          <button class="pf-edit-btn" onclick="togglePfEdit('Date')">edit</button>
+        </div>
+        <div class="pf-row" id="pfRowFacts" style="display:none">
+          <div class="pf-label">Facts</div>
+          <div class="pf-value" id="pfValFacts"></div>
+          <button class="pf-edit-btn" onclick="togglePfEdit('Facts')">edit</button>
+        </div>
+        <div class="pf-row" id="pfRowLink">
+          <div class="pf-label">Link</div>
+          <div class="pf-value" id="pfValLink"></div>
+          <button class="pf-edit-btn" onclick="togglePfEdit('Link')">edit</button>
+        </div>
+      </div>
+
+      <div class="pf-review-label" id="reviewLabel" style="display:none">Review</div>
+
       <div class="toolbar">
         <button class="tb-btn" onclick="tbWrap('<b>','</b>')"><b>B</b></button>
         <button class="tb-btn" onclick="tbWrap('<i>','</i>')"><i>I</i></button>
         <button class="tb-btn" onclick="tbWrap('<code>','</code>')">{ }</button>
         <button class="tb-btn" onclick="tbInsert('\n• ')">• item</button>
         <button class="tb-btn" onclick="tbInsert('\n\n')">↵↵</button>
-        <button class="tb-btn" onclick="tbInsert('🎵')">🎵</button>
-        <button class="tb-btn" onclick="tbInsert('🗓')">🗓</button>
-        <button class="tb-btn" onclick="tbInsert('📌')">📌</button>
-        <button class="tb-btn" onclick="tbInsert('🎧')">🎧</button>
       </div>
 
       <textarea
@@ -790,6 +896,7 @@
         id="draftText"
         oninput="onDraftInput()"
         autocomplete="off" autocorrect="off" spellcheck="false"
+        placeholder="Write your review here…"
       ></textarea>
 
       <div class="preview-divider">
@@ -949,6 +1056,7 @@ const LS = {
 };
 
 let coverUrl = '';
+let draftFixed = { title: '', date: '', facts: '', link: '', linkText: 'Слушать' };
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
 function showPage(id) {
@@ -1120,7 +1228,7 @@ async function tgSendPhoto(token, chatId, photo, caption) {
 
 // ── Preview ───────────────────────────────────────────────────────────────────
 function renderPreview() {
-  const raw = document.getElementById('draftText').value;
+  const raw = draftFixed.title ? assemblePost() : document.getElementById('draftText').value;
 
   const wrap = document.getElementById('previewCoverWrap');
   wrap.innerHTML = coverUrl
@@ -1144,7 +1252,8 @@ function renderPreview() {
 function onDraftInput() { updateCount(); renderPreview(); }
 
 function updateCount() {
-  const n = document.getElementById('draftText').value.length;
+  const full = draftFixed.title ? assemblePost() : document.getElementById('draftText').value;
+  const n = full.length;
   const el = document.getElementById('charCount');
   el.textContent = n + ' / 1024';
   el.className = 'char-count' + (n > 1024 ? ' over' : '');
@@ -1208,15 +1317,15 @@ async function buildDraft() {
 
     step(4, 'active');
     const date = fmtDate(album.releaseDate);
-    const factsBlock = facts ? '📌 <b>A few facts:</b>\n'+facts+'\n\n' : '';
-
-    const draft =
-      '🎵 <b>'+esc(album.artist)+'</b> — <b>'+esc(album.name)+'</b>\n\n' +
-      '🗓 Release date: '+date+'\n\n' +
-      factsBlock +
-      '<a href="'+albumLink+'">🎧 Listen on all platforms</a>';
 
     coverUrl = album.coverUrl;
+    draftFixed = {
+      title:  '<b>'+esc(album.artist)+'</b> — <b>'+esc(album.name)+'</b>',
+      date:   date,
+      facts:  facts,
+      link:   albumLink,
+      linkText: 'Слушать'
+    };
 
     document.getElementById('metaCard').innerHTML =
       (album.coverUrl ? '<img class="cover" src="'+album.coverUrl+'" alt="">' : '') +
@@ -1227,7 +1336,10 @@ async function buildDraft() {
         '<div class="meta-sub"><a href="'+albumLink+'" target="_blank">'+albumLink+'</a></div>' +
       '</div>';
 
-    document.getElementById('draftText').value = draft;
+    renderFixedFields();
+    document.getElementById('draftText').value = '';
+    document.getElementById('postFields').style.display = 'block';
+    document.getElementById('reviewLabel').style.display = 'block';
     onDraftInput();
     document.getElementById('result').style.display = 'block';
     step(4, 'done');
@@ -1244,12 +1356,98 @@ async function buildDraft() {
   }
 }
 
+// ── Assemble full post ───────────────────────────────────────────────────────
+function assemblePost() {
+  if (!draftFixed.title) return document.getElementById('draftText').value;
+
+  const factsBlock = draftFixed.facts
+    ? '\n\n' + draftFixed.facts
+    : '';
+
+  const review = document.getElementById('draftText').value.trim();
+  const reviewBlock = review ? '\n\n' + review : '';
+
+  return '🎵 ' + draftFixed.title +
+    '\n\n🗓 ' + draftFixed.date +
+    factsBlock +
+    reviewBlock +
+    '\n\n<a href="' + draftFixed.link + '">' + draftFixed.linkText + '</a>';
+}
+
+// ── Render fixed fields ──────────────────────────────────────────────────────
+function renderFixedFields() {
+  setPfVal('Title', draftFixed.title.replace(/<[^>]+>/g, ''));
+  setPfVal('Date',  draftFixed.date);
+  if (draftFixed.facts) {
+    document.getElementById('pfRowFacts').style.display = 'flex';
+    setPfVal('Facts', draftFixed.facts);
+  } else {
+    document.getElementById('pfRowFacts').style.display = 'none';
+  }
+  setPfVal('Link', draftFixed.linkText + ' → ' + draftFixed.link);
+}
+
+function setPfVal(field, text) {
+  const el = document.getElementById('pfVal'+field);
+  if (el) el.textContent = text;
+}
+
+function togglePfEdit(field) {
+  const row = document.getElementById('pfRow'+field);
+  const valEl = document.getElementById('pfVal'+field);
+  const btn = row.querySelector('.pf-edit-btn');
+
+  if (row.classList.contains('editing')) {
+    // Save
+    const inp = row.querySelector('.pf-input');
+    const val = inp.value;
+    if (field === 'Title') {
+      // store raw; will wrap in <b> around artist—album split
+      draftFixed.title = esc(val);
+    } else if (field === 'Date') {
+      draftFixed.date = val;
+    } else if (field === 'Facts') {
+      draftFixed.facts = val;
+    } else if (field === 'Link') {
+      draftFixed.linkText = val;
+    }
+    inp.remove();
+    valEl.style.display = '';
+    row.classList.remove('editing');
+    btn.textContent = 'edit';
+    onDraftInput();
+  } else {
+    // Enter edit mode
+    valEl.style.display = 'none';
+    const inp = document.createElement(field === 'Facts' ? 'textarea' : 'input');
+    inp.className = 'pf-input';
+    if (field === 'Facts') {
+      inp.style.minHeight = '60px';
+      inp.style.resize = 'none';
+      inp.value = draftFixed.facts;
+    } else if (field === 'Title') {
+      inp.value = draftFixed.title.replace(/<[^>]+>/g, '');
+    } else if (field === 'Date') {
+      inp.value = draftFixed.date;
+    } else if (field === 'Link') {
+      inp.value = draftFixed.linkText;
+    }
+    inp.addEventListener('input', onDraftInput);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && field !== 'Facts') { e.preventDefault(); togglePfEdit(field); } });
+    // Insert after label
+    row.querySelector('.pf-label').after(inp);
+    row.classList.add('editing');
+    btn.textContent = 'done';
+    inp.focus();
+  }
+}
+
 // ── Send now ──────────────────────────────────────────────────────────────────
 async function sendNow() {
   const token = cfg(LS.TG_TOKEN), channel = cfg(LS.TG_CHAN);
   if (!token || !channel) { toast('No Telegram credentials — open Settings', 'err'); showPage('settings'); return; }
 
-  const text = document.getElementById('draftText').value;
+  const text = draftFixed.title ? assemblePost() : document.getElementById('draftText').value;
   const btn = document.getElementById('sendNowBtn');
   btn.disabled = true; btn.textContent = 'Sending…';
 
@@ -1267,7 +1465,7 @@ async function sendNow() {
 // ── Copy ──────────────────────────────────────────────────────────────────────
 async function copyDraft() {
   try {
-    await navigator.clipboard.writeText(document.getElementById('draftText').value);
+    await navigator.clipboard.writeText(draftFixed.title ? assemblePost() : document.getElementById('draftText').value);
     toast('Copied', 'ok');
   } catch { toast('Copy failed', 'err'); }
 }
@@ -1390,7 +1588,7 @@ async function confirmSchedule() {
 
   const token   = cfg(LS.TG_TOKEN);
   const channel = cfg(LS.TG_CHAN);
-  const text    = document.getElementById('draftText').value;
+  const text    = draftFixed.header ? assemblePost() : document.getElementById('draftText').value;
   const cover   = coverUrl;
 
   const btn = document.querySelector('.btn-confirm');
