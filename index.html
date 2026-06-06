@@ -1754,6 +1754,8 @@ function togglePromptField() {
   const on = document.getElementById('cfgFactsEnabled').checked;
   document.getElementById('promptField').classList.toggle('disabled', !on);
   localStorage.setItem(LS.FACTS_ON, on ? 'true' : 'false');
+  // Push to Firebase immediately so it survives reload
+  if (typeof saveToFirestore === 'function' && fbUser) saveToFirestore();
 }
 
 function pickColor(el) {
@@ -1761,6 +1763,7 @@ function pickColor(el) {
   el.classList.add('selected');
   localStorage.setItem(LS.ACCENT, el.dataset.color);
   applyAppearance();
+  if (typeof saveToFirestore === 'function' && fbUser) saveToFirestore();
 }
 
 function pickFont(el) {
@@ -1768,6 +1771,7 @@ function pickFont(el) {
   el.classList.add('selected');
   localStorage.setItem(LS.FONT, el.dataset.font);
   applyAppearance();
+  if (typeof saveToFirestore === 'function' && fbUser) saveToFirestore();
 }
 
 function applyAppearance() {
@@ -2202,27 +2206,29 @@ function showGateSettings() {
   showPage('settings');
 }
 
-function initFirebase() {
-  const apiKey    = cfg(LS.FB_API_KEY);
-  const projectId = cfg(LS.FB_PROJECT_ID);
-  const authDomain = cfg(LS.FB_AUTH_DOMAIN);
-  const appId     = cfg(LS.FB_APP_ID);
-  const storageBucket = cfg(LS.FB_STORAGE_BUCKET);
-  const messagingSenderId = cfg(LS.FB_MSG_SENDER_ID);
+// ── Hardcoded Firebase config (not secret — security via Firestore rules) ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC8hyU_qFgjmLfthT5Mrt1vdDbY6TeqSEE",
+  authDomain: "sad-poster-c74b9.firebaseapp.com",
+  projectId: "sad-poster-c74b9",
+  storageBucket: "sad-poster-c74b9.firebasestorage.app",
+  messagingSenderId: "822080386678",
+  appId: "1:822080386678:web:5e3a2995dbd69b54ed1157"
+};
 
-  if (!apiKey || !projectId) {
-    // Show gate in "needs config" mode
-    const gate = document.getElementById('authGate');
-    gate.classList.add('needs-config');
-    gate.style.display = 'flex';
+function initFirebase() {
+  // Wait for Firebase SDK to be available
+  if (typeof firebase === 'undefined') {
+    setTimeout(initFirebase, 100);
     return;
   }
 
   try {
-    // Delete existing app if config changed
-    if (fbApp) { firebase.app().delete(); fbApp = null; fbAuth = null; fbDb = null; }
+    // Get or create Firebase app
+    try { fbApp = firebase.app(); } catch(e) {
+      fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    }
 
-    fbApp  = firebase.initializeApp({ apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId });
     fbAuth = firebase.auth();
     fbDb   = firebase.firestore();
 
@@ -2239,10 +2245,7 @@ function initFirebase() {
       }
     });
   } catch (e) {
-    // App already initialized — just get existing instance
-    fbApp  = firebase.app();
-    fbAuth = firebase.auth();
-    fbDb   = firebase.firestore();
+    console.error('[initFirebase]', e);
   }
 }
 
@@ -2263,7 +2266,7 @@ function updateAuthUI(user) {
   const el = document.getElementById('navAuth');
   if (user) {
     el.innerHTML =
-      (user.photoURL ? '<img class="auth-avatar" src="'+user.photoURL+'" onerror="this.style.display='none'">' : '') +
+      (user.photoURL ? '<img class="auth-avatar" src="'+user.photoURL+'" onerror="this.hidden=true">' : '') +
       '<span class="auth-email">'+user.email+'</span>' +
       '<button class="btn-auth" onclick="signOut()">Sign out</button>';
     setSyncStatus('Signed in as ' + user.email, 'ok');
@@ -2392,6 +2395,16 @@ async function pushConfig() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 applyAppearance();
+
+// Wait for Firebase SDK to be ready before initializing
+function tryInitFirebase() {
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    initFirebase();
+  } else {
+    setTimeout(tryInitFirebase, 50);
+  }
+}
+tryInitFirebase();
 </script>
 </body>
 </html>
